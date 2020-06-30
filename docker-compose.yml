@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+    nginx:
+        image: nginx:latest
+        ports:
+            - "80:80"
+        volumes:
+            - ./web-content:/web-content
+            - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+        networks:
+            - hello-net
+    php:
+        build: ./php
+        volumes:
+            - ./web-content:/web-content
+        networks:
+            - hello-net
+    prometheus:
+        image: prom/prometheus
+        privileged: true
+        volumes:
+            - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        command:
+            - '--config.file=/etc/prometheus/prometheus.yml'
+        ports:
+            - "9090:9090"
+        networks:
+            - hello-net
+    grafana:
+        image: grafana/grafana
+        ports:
+            - 3000:3000
+        networks:
+            - hello-net
+        environment:
+            - GF_SECURITY_ADMIN_PASSWORD=admin
+networks:
+    hello-net:
+        driver: bridge
