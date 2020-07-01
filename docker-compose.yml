@@ -11,9 +11,12 @@ services:
         networks:
             - hello-net
     php:
-        build: ./php
+        image: php:7.1-fpm
         volumes:
             - ./web-content:/web-content
+            - ./php:/usr/local/etc/php/custom.d
+        environment:
+            PHP_INI_SCAN_DIR: "/usr/local/etc/php/custom.d:/usr/local/etc/php/conf.d"
         networks:
             - hello-net
     prometheus:
